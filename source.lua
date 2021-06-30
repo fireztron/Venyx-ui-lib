@@ -1789,8 +1789,6 @@ do
 		end)
 		
 		search.TextBox.FocusLost:Connect(function()
-			self:updateDropdown(dropdown, "Dropdown", nil, callback)
-			
 			focused = false
 		end)
 		
@@ -2143,7 +2141,7 @@ do
 					end)	
 				end
 
-				self:updateDropdown(dropdown, value, nil, callback)
+				self:updateDropdown(dropdown, "Dropdown", nil, callback)
 			end)
 			
 			entries = entries + 1
