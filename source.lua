@@ -1789,7 +1789,7 @@ do
 		end)
 		
 		search.TextBox.FocusLost:Connect(function()
-			dropdown.Search.TextBox.Text = title
+			--dropdown.Search.TextBox.Text = title
 			
 			focused = false
 		end)
