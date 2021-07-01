@@ -2108,7 +2108,7 @@ do
 			end
 		end
 			
-		for i, value in pairs(list or {}) do
+		for i, value in ipairs(list or {}) do
 			local button = utility:Create("ImageButton", {
 				Parent = dropdown.List.Frame,
 				BackgroundTransparency = 1,
