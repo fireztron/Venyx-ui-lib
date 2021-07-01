@@ -1789,6 +1789,8 @@ do
 		end)
 		
 		search.TextBox.FocusLost:Connect(function()
+			self:updateDropdown(dropdown, "Dropdown", list, callback)
+			
 			focused = false
 		end)
 		
