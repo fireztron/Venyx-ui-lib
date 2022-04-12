@@ -563,6 +563,10 @@ do
                 self:updateDropdown(dropdownFrame, nil, list, callback)
             end
         end
+
+        function dropdown:updateDropdownCallback()
+            callback = self.callback
+        end
 		
 		return setmetatable({
             opened = opened,
