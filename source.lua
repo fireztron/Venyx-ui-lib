@@ -507,6 +507,81 @@ do
 				})
 			})
 		})
+
+        function dropdown:updateDropdown(dropdownFrame, title, list)
+            if title then
+                dropdownFrame.Search.TextBox.Text = title
+            end
+            
+            local entries = 0
+            
+            utility:Pop(dropdownFrame.Search, 10)
+            
+            for i, button in pairs(dropdownFrame.List.Frame:GetChildren()) do
+                if button:IsA("ImageButton") then
+                    button:Destroy()
+                end
+            end
+                
+            for i, value in ipairs(list or {}) do
+                local button = utility:Create("ImageButton", {
+                    Parent = dropdownFrame.List.Frame,
+                    BackgroundTransparency = 1,
+                    BorderSizePixel = 0,
+                    Size = UDim2.new(1, 0, 0, 30),
+                    ZIndex = 2,
+                    Image = "rbxassetid://5028857472",
+                    ImageColor3 = themes.DarkContrast,
+                    ScaleType = Enum.ScaleType.Slice,
+                    SliceCenter = Rect.new(2, 2, 298, 298)
+                }, {
+                    utility:Create("TextLabel", {
+                        BackgroundTransparency = 1,
+                        Position = UDim2.new(0, 10, 0, 0),
+                        Size = UDim2.new(1, -10, 1, 0),
+                        ZIndex = 3,
+                        Font = Enum.Font.Gotham,
+                        Text = value,
+                        TextColor3 = themes.TextColor,
+                        TextSize = 12,
+                        TextXAlignment = "Left",
+                        TextTransparency = 0.10000000149012
+                    })
+                })
+                
+                button.MouseButton1Click:Connect(function()
+                    if callback then
+                        callback(value, function(...)
+                            self:updateDropdown(dropdownFrame, ...)
+                        end)	
+                    end
+    
+                    self:updateDropdown(dropdownFrame, "Dropdown", nil, callback)
+                end)
+                
+                entries = entries + 1
+            end
+            
+            local frame = dropdownFrame.List.Frame
+            
+            utility:Tween(dropdownFrame, {Size = UDim2.new(1, 0, 0, (entries == 0 and 30) or math.clamp(entries, 0, 3) * 34 + 38)}, 0.3)
+            utility:Tween(dropdownFrame.Search.Button, {Rotation = list and 180 or 0}, 0.3)
+            
+            if entries > 3 then
+            
+                for i, button in pairs(dropdownFrame.List.Frame:GetChildren()) do
+                    if button:IsA("ImageButton") then
+                        button.Size = UDim2.new(1, -6, 0, 30)
+                    end
+                end
+                
+                frame.CanvasSize = UDim2.new(0, 0, 0, (entries * 34) - 4)
+                frame.ScrollBarImageTransparency = 0
+            else
+                frame.CanvasSize = UDim2.new(0, 0, 0, 0)
+                frame.ScrollBarImageTransparency = 1
+            end
+        end
 		
 		--table.insert(section.modules, dropdownFrame)
 		--section:Resize()
@@ -2128,80 +2203,6 @@ do
 		return value
 	end
 	
-	function dropdown:updateDropdown(dropdownFrame, title, list, callback)
-		if title then
-			dropdownFrame.Search.TextBox.Text = title
-		end
-		
-		local entries = 0
-		
-		utility:Pop(dropdownFrame.Search, 10)
-		
-		for i, button in pairs(dropdownFrame.List.Frame:GetChildren()) do
-			if button:IsA("ImageButton") then
-				button:Destroy()
-			end
-		end
-			
-		for i, value in ipairs(list or {}) do
-			local button = utility:Create("ImageButton", {
-				Parent = dropdownFrame.List.Frame,
-				BackgroundTransparency = 1,
-				BorderSizePixel = 0,
-				Size = UDim2.new(1, 0, 0, 30),
-				ZIndex = 2,
-				Image = "rbxassetid://5028857472",
-				ImageColor3 = themes.DarkContrast,
-				ScaleType = Enum.ScaleType.Slice,
-				SliceCenter = Rect.new(2, 2, 298, 298)
-			}, {
-				utility:Create("TextLabel", {
-					BackgroundTransparency = 1,
-					Position = UDim2.new(0, 10, 0, 0),
-					Size = UDim2.new(1, -10, 1, 0),
-					ZIndex = 3,
-					Font = Enum.Font.Gotham,
-					Text = value,
-					TextColor3 = themes.TextColor,
-					TextSize = 12,
-					TextXAlignment = "Left",
-					TextTransparency = 0.10000000149012
-				})
-			})
-			
-			button.MouseButton1Click:Connect(function()
-				if callback then
-					callback(value, function(...)
-						self:updateDropdown(dropdownFrame, ...)
-					end)	
-				end
-
-				self:updateDropdown(dropdownFrame, "Dropdown", nil, callback)
-			end)
-			
-			entries = entries + 1
-		end
-		
-		local frame = dropdownFrame.List.Frame
-		
-		utility:Tween(dropdownFrame, {Size = UDim2.new(1, 0, 0, (entries == 0 and 30) or math.clamp(entries, 0, 3) * 34 + 38)}, 0.3)
-		utility:Tween(dropdownFrame.Search.Button, {Rotation = list and 180 or 0}, 0.3)
-		
-		if entries > 3 then
-		
-			for i, button in pairs(dropdownFrame.List.Frame:GetChildren()) do
-				if button:IsA("ImageButton") then
-					button.Size = UDim2.new(1, -6, 0, 30)
-				end
-			end
-			
-			frame.CanvasSize = UDim2.new(0, 0, 0, (entries * 34) - 4)
-			frame.ScrollBarImageTransparency = 0
-		else
-			frame.CanvasSize = UDim2.new(0, 0, 0, 0)
-			frame.ScrollBarImageTransparency = 1
-		end
-	end
 end
 
 return library
