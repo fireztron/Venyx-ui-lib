@@ -564,7 +564,6 @@ do
             end
         end
 		
-		print(section, list, title, callback, dropdownFrame)
 		return setmetatable({
             opened = opened,
 			section = section,
@@ -2126,7 +2125,6 @@ do
 	end
 	
 	function dropdown:updateDropdown(dropdownFrame, title, list, callback)
-        print(dropdownFrame,title, list, callback)
 		if title then
 			dropdownFrame.Search.TextBox.Text = title
 		end
