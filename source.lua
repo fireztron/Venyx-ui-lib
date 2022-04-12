@@ -424,12 +424,12 @@ do
 		}, section) 
 	end
 
-    function dropdown.new(section, title, list, callback)
-        --warn(section, title, list, callback)
+    function dropdown.new(option)
+        --warn(option.section, option.title, option.list, option.callback)
 
 		local dropdownFrame = utility:Create("Frame", {
 			Name = "Dropdown",
-			Parent = section.container,
+			Parent = option.section.container,
 			BackgroundTransparency = 1,
 			Size = UDim2.new(1, 0, 0, 30),
 			ClipsDescendants = true
@@ -458,7 +458,7 @@ do
 					Size = UDim2.new(1, -42, 1, 0),
 					ZIndex = 3,
 					Font = Enum.Font.Gotham,
-					Text = title,
+					Text = option.title,
 					TextColor3 = themes.TextColor,
 					TextSize = 12,
 					TextTransparency = 0.10000000149012,
@@ -507,8 +507,10 @@ do
 				})
 			})
 		})
+        option.dropdownFrame = dropdownFrame
 
-        function dropdown:updateDropdown(dropdownFrame, title, list)
+        function dropdown:updateDropdown(dropdownFrame, title, list, callback, option)
+            --print(dropdownFrame,title, list, callback)
             if title then
                 dropdownFrame.Search.TextBox.Text = title
             end
@@ -556,7 +558,7 @@ do
                         end)	
                     end
     
-                    self:updateDropdown(dropdownFrame, "Dropdown", nil, callback)
+                    self:updateDropdown(dropdownFrame, option.title, nil, callback)
                 end)
                 
                 entries = entries + 1
@@ -582,29 +584,27 @@ do
                 frame.ScrollBarImageTransparency = 1
             end
         end
-		
+
 		--table.insert(section.modules, dropdownFrame)
 		--section:Resize()
 		
 		local search = dropdownFrame.Search
 		local focused
 		local opened
-        
-		list = list or {}
-		
+
 		search.Button.MouseButton1Click:Connect(function()
 			if search.Button.Rotation == 0 then
-				dropdown:updateDropdown(dropdownFrame, nil, list, callback)
+				dropdown:updateDropdown(dropdownFrame, option.title, option.list, option.callback, option)
                 opened = true
 			else
-				dropdown:updateDropdown(dropdownFrame, nil, nil, callback)
+				dropdown:updateDropdown(dropdownFrame, nil, nil, option.callback, option)
                 opened = false
 			end
 		end)
 		
 		search.TextBox.Focused:Connect(function()
 			if search.Button.Rotation == 0 then
-				dropdown:updateDropdown(dropdownFrame, nil, list, callback)
+				dropdown:updateDropdown(dropdownFrame, nil, option.list, option.callback, option)
                 opened = true
 			end
 			
@@ -612,45 +612,26 @@ do
 		end)
 		
 		search.TextBox.FocusLost:Connect(function()
-			--dropdown.Search.TextBox.Text = title
+			--dropdown.Search.TextBox.Text = option.title
 			
 			focused = false
 		end)
 		
 		search.TextBox:GetPropertyChangedSignal("Text"):Connect(function()
 			if focused then
-				local list = utility:Sort(search.TextBox.Text, list)
+				local list = utility:Sort(search.TextBox.Text, option.list)
 				list = #list ~= 0 and list 
 				
-				dropdown:updateDropdown(dropdownFrame, nil, list, callback)
+				dropdown:updateDropdown(dropdownFrame, nil, list, option.callback, option)
 			end
 		end)
 		
 		dropdownFrame:GetPropertyChangedSignal("Size"):Connect(function()
-			section:Resize()
+			option.section:Resize()
 		end)
 
-        function dropdown:updateDropdownList()
-            list = self.list or {}
-            if opened then
-                local list = utility:Sort(search.TextBox.Text, list)
-                list = #list ~= 0 and list 
-                self:updateDropdown(dropdownFrame, nil, list, callback)
-            end
-        end
-
-        function dropdown:updateDropdownCallback()
-            callback = self
-        end
-		
-		return setmetatable({
-            opened = opened,
-			section = section,
-            list = list,
-            title = title,
-            callback = callback,
-            dropdownFrame = dropdownFrame
-		}, dropdown) 
+		--print(option.section, option.list, option.title, callback, dropdownFrame)
+        return dropdownFrame
 	end
 	
 	function library:addPage(...)
@@ -675,10 +656,17 @@ do
 		return section
 	end
 
-    function section:addDropdown(...)
-		local dropdown = dropdown.new(self, ...)
-		table.insert(self.modules, dropdown.dropdownFrame)
-		return dropdown
+    function section:addDropdown(title, list, callback)
+        local option = {}
+        option.section = self
+        option.list = list
+        option.title = title
+        option.callback = callback
+        option.type = "dropdown"
+        
+		local dropdownFrame = dropdown.new(option)
+		table.insert(self.modules, dropdownFrame)
+		return option
 	end
 	
 	-- functions
