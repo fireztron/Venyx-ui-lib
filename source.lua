@@ -640,7 +640,7 @@ do
         end
 
         function dropdown:updateDropdownCallback()
-            callback = self.callback
+            callback = self
         end
 		
 		return setmetatable({
