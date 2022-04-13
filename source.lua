@@ -552,13 +552,13 @@ do
                 })
                 
                 button.MouseButton1Click:Connect(function()
-                    if callback then
-                        callback(value, function(...)
+                    if option.callback then
+                        option.callback(value, function(...)
                             self:updateDropdown(dropdownFrame, ...)
                         end)	
                     end
     
-                    self:updateDropdown(dropdownFrame, option.title, nil, callback)
+                    self:updateDropdown(dropdownFrame, option.title, nil, option.callback)
                 end)
                 
                 entries = entries + 1
@@ -612,7 +612,7 @@ do
 		end)
 		
 		search.TextBox.FocusLost:Connect(function()
-			--dropdown.Search.TextBox.Text = option.title
+			--dropdownFrame.Search.TextBox.Text = option.title
 			
 			focused = false
 		end)
@@ -629,6 +629,15 @@ do
 		dropdownFrame:GetPropertyChangedSignal("Size"):Connect(function()
 			option.section:Resize()
 		end)
+
+        function option:updateDropdownList()
+            list = self.list or {}
+            if opened then
+                local list = utility:Sort(search.TextBox.Text, list)
+                list = #list ~= 0 and list 
+                dropdown:updateDropdown(dropdownFrame, nil, list, option.callback, option)
+            end
+        end
 
 		--print(option.section, option.list, option.title, callback, dropdownFrame)
         return dropdownFrame
