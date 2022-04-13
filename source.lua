@@ -597,7 +597,7 @@ do
 				dropdown:updateDropdown(dropdownFrame, option.title, option.list, option.callback, option)
                 opened = true
 			else
-				dropdown:updateDropdown(dropdownFrame, nil, nil, option.callback, option)
+				dropdown:updateDropdown(dropdownFrame, option.title, nil, option.callback, option)
                 opened = false
 			end
 		end)
