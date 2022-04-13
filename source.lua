@@ -590,22 +590,22 @@ do
 		
 		local search = dropdownFrame.Search
 		local focused
-		local opened
+		--local opened
 
 		search.Button.MouseButton1Click:Connect(function()
 			if search.Button.Rotation == 0 then
 				dropdown:updateDropdown(dropdownFrame, option.title, option.list, option.callback, option)
-                opened = true
+                option.opened = true
 			else
 				dropdown:updateDropdown(dropdownFrame, option.title, nil, option.callback, option)
-                opened = false
+                option.opened = false
 			end
 		end)
 		
 		search.TextBox.Focused:Connect(function()
 			if search.Button.Rotation == 0 then
 				dropdown:updateDropdown(dropdownFrame, nil, option.list, option.callback, option)
-                opened = true
+                option.opened = true
 			end
 			
 			focused = true
@@ -632,7 +632,7 @@ do
 
         function option:updateDropdownList()
             list = self.list or {}
-            if opened then
+            if option.opened then
                 local list = utility:Sort(search.TextBox.Text, list)
                 list = #list ~= 0 and list 
                 dropdown:updateDropdown(dropdownFrame, nil, list, option.callback, option)
@@ -668,6 +668,7 @@ do
     function section:addDropdown(title, list, callback)
         local option = {}
         option.section = self
+        option.opened = false
         option.list = list
         option.title = title
         option.callback = callback
